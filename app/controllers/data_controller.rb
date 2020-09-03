@@ -3,11 +3,10 @@ class DataController < ApplicationController
   end
 
   def ajax
-    if params[:name]
-      data = Datum.where "name like ?", "%" + params[:name] + "%"
-    else
-      data = Datum.all
-    end
-    render plain: data.to_json
+    # url = "https://news.yahoo.co.jp/pickup/rss.xml" # Yahoo
+    url = "https://digiday.jp/feed/" # DIGIDAY 日本版
+    uri = URI.parse(url)
+    response = Net::HTTP.get_response(uri) # 指定したアドレスにアクセスしてレスポンスを得る
+    render plain: Hash::from_xml(response.body).to_json # XMLデータをハッシュ に変換し、更にJSONに変換する
   end
 end
